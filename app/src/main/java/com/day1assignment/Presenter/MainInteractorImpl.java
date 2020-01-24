@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.day1assignment.Interface.GetDataListener;
 import com.day1assignment.Interface.MainInteractor;
+import com.day1assignment.Interface.MainView;
 import com.day1assignment.Model.CardModelClass;
 import com.day1assignment.R;
 import com.day1assignment.Util.API;
@@ -32,10 +33,12 @@ import javax.xml.parsers.SAXParserFactory;
 public class MainInteractorImpl implements MainInteractor {
 
     private GetDataListener mGetDatalistener;
+    private MainView mainView;
     private RSSHandler rssHandler;
 
     MainInteractorImpl(GetDataListener mGetDatalistener) {
         this.mGetDatalistener = mGetDatalistener;
+
     }
 
     @Override
@@ -53,6 +56,7 @@ public class MainInteractorImpl implements MainInteractor {
     private void initNetworkCall(Context context) {
 
         try {
+
             URL rssUrl = new URL(API.ASS_URL);
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();
@@ -62,11 +66,8 @@ public class MainInteractorImpl implements MainInteractor {
             InputSource inputSource = new InputSource(rssUrl.openStream());
             xmlReader.parse(inputSource);
 
-        } catch (IOException e) {
+        } catch (IOException | SAXException e) {
             mGetDatalistener.onFailure(e.toString());
-        } catch (SAXException e) {
-            mGetDatalistener.onFailure(e.toString());
-
         } catch (ParserConfigurationException e) {
             mGetDatalistener.onFailure(e.toString());
 
@@ -113,16 +114,16 @@ public class MainInteractorImpl implements MainInteractor {
         String rssResult = "";
         boolean item = false;
 
-        public RSSHandler() {
+        RSSHandler() {
             cardModelClassList = new ArrayList();
         }
 
-        public List<CardModelClass> getItems() {
+        List<CardModelClass> getItems() {
             return cardModelClassList;
         }
 
         public void startElement(String uri, String localName, String qName,
-                                 Attributes attrs) throws SAXException {
+                                 Attributes attrs) {
 
             if (localName.equalsIgnoreCase("item")) {
                 rssFeed = new CardModelClass();
@@ -140,7 +141,7 @@ public class MainInteractorImpl implements MainInteractor {
             }
 
 
-            if (!localName.equals("item") && item == true) {
+            if (!localName.equals("item") && item) {
                 rssResult = rssResult + localName + ": ";
                 if (localName.equalsIgnoreCase("description")) {
                     parsingDes = true;
@@ -151,30 +152,29 @@ public class MainInteractorImpl implements MainInteractor {
         }
 
         public void endElement(String namespaceURI, String localName,
-                               String qName) throws SAXException {
+                               String qName) {
             if (localName.equalsIgnoreCase("item")) {
                 cardModelClassList.add(rssFeed);
                 rssFeed = null;
             }
 
-                if (localName.equalsIgnoreCase("title")) {
-                    parsingTitle = false;
-                } else if (localName.equalsIgnoreCase("link")) {
-                    parsingLink = false;
-                } else if (localName.equalsIgnoreCase("category")) {
-                    parsingCat = false;
-                } else if (localName.equalsIgnoreCase("pubDate")) {
-                    parsingPubDat = false;
-                } else if (localName.equalsIgnoreCase("description")) {
-                    parsingDes = false;
-                }
+            if (localName.equalsIgnoreCase("title")) {
+                parsingTitle = false;
+            } else if (localName.equalsIgnoreCase("link")) {
+                parsingLink = false;
+            } else if (localName.equalsIgnoreCase("category")) {
+                parsingCat = false;
+            } else if (localName.equalsIgnoreCase("pubDate")) {
+                parsingPubDat = false;
+            } else if (localName.equalsIgnoreCase("description")) {
+                parsingDes = false;
+            }
 
         }
 
-        public void characters(char[] ch, int start, int length)
-                throws SAXException {
+        public void characters(char[] ch, int start, int length) {
             String cdata = new String(ch, start, length);
-            if (item == true) {
+            if (item) {
                 if (parsingTitle) {
                     if (rssFeed != null) {
                         rssFeed.setTitle(cdata);

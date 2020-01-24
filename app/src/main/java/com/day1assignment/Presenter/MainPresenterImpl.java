@@ -7,7 +7,7 @@ import com.day1assignment.Interface.GetDataListener;
 import com.day1assignment.Interface.MainInteractor;
 import com.day1assignment.Interface.MainPresenter;
 import com.day1assignment.Interface.MainView;
-import com.day1assignment.Model.AssignmentDataManager;
+
 import com.day1assignment.Model.CardModelClass;
 
 import java.util.List;
@@ -28,10 +28,6 @@ public class MainPresenterImpl implements MainPresenter, GetDataListener {
 
     @Override
     public void onSuccess(String message, List<CardModelClass> list) {
-
-        // updating cache copy of data for restoring purpose
-        AssignmentDataManager.getInstance().setLatestData(list);
-
 
         if (mMainView != null) {
 

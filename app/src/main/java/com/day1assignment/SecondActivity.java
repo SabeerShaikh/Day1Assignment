@@ -3,15 +3,21 @@ package com.day1assignment;
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import androidx.appcompat.app.AppCompatActivity;
+import static android.app.ProgressDialog.show;
 
-import static android.app.ProgressDialog.*;
-
-public class SecondScreen extends AppCompatActivity {
+public class SecondActivity extends AppCompatActivity {
     private WebView wv;
     public static String URLTAG = "url";
     private String url;
@@ -19,12 +25,14 @@ public class SecondScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_second_screen);
-
+        setContentView(R.layout.activity_second);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         wv = findViewById(R.id.webview);
 
-        Bundle b = getIntent().getExtras();
-        url = b.getString(URLTAG);
+        Bundle bundle = getIntent().getExtras();
+        assert bundle != null;
+        url = bundle.getString(URLTAG);
         progDailog = show(this, "Loading","Please wait...", true);
         progDailog.setCancelable(false);
 
@@ -38,7 +46,7 @@ public class SecondScreen extends AppCompatActivity {
         wv.setWebViewClient(new myWebClient());
 
         wv.loadUrl(url);
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     public class myWebClient extends WebViewClient {
@@ -66,5 +74,6 @@ public class SecondScreen extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+
     }
 }

@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
         placeSwitcher.setCurrentText(list.get(0).getTitle());
 
         clockSwitcher.setFactory(new TextViewFactory(R.style.ClockTextView, false));
-        clockSwitcher.setCurrentText(list.get(0).getPubdate());
+        clockSwitcher.setCurrentText(list.get(0).getPubdate().substring(0,list.get(0).getPubdate().indexOf("+")));
 
         descriptionsSwitcher.setInAnimation(this, android.R.anim.fade_in);
         descriptionsSwitcher.setOutAnimation(this, android.R.anim.fade_out);
@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     }
 
     private void onActiveCardChange(int pos) {
-        int animH[] = new int[]{R.anim.slide_in_right, R.anim.slide_out_left};
+        int[] animH = new int[]{R.anim.slide_in_right, R.anim.slide_out_left};
         int animV[] = new int[]{R.anim.slide_in_top, R.anim.slide_out_bottom};
 
         final boolean left2right = pos < currentPosition;
@@ -193,7 +193,9 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
         clockSwitcher.setInAnimation(MainActivity.this, animV[0]);
         clockSwitcher.setOutAnimation(MainActivity.this, animV[1]);
-        clockSwitcher.setText(cardModelClassList.get(pos).getPubdate());
+
+
+        clockSwitcher.setText(cardModelClassList.get(pos).getPubdate().substring(0,cardModelClassList.get(pos).getPubdate().indexOf("+")));
 
         descriptionsSwitcher.setText(cardModelClassList.get(pos).getLink());
 
@@ -267,8 +269,8 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
             final int clickedPosition = mRecyclerView.getChildAdapterPosition(view);
             if (clickedPosition == activeCardPosition) {
-                final Intent intent = new Intent(MainActivity.this, SecondScreen.class);
-                 intent.putExtra(SecondScreen.URLTAG, cardModelClassList.get(activeCardPosition).getLink());
+                final Intent intent = new Intent(MainActivity.this, SecondActivity.class);
+                 intent.putExtra(SecondActivity.URLTAG, cardModelClassList.get(activeCardPosition).getLink());
 
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                     startActivity(intent);
@@ -281,6 +283,8 @@ public class MainActivity extends AppCompatActivity implements MainView {
                     startActivity(intent, options.toBundle());
                     MainActivity.this.overridePendingTransition(0,0);
                 }
+
+
             } else if (clickedPosition > activeCardPosition) {
                 mRecyclerView.smoothScrollToPosition(clickedPosition);
                 onActiveCardChange(clickedPosition);
