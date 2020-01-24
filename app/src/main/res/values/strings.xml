@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">News Feed</string>
+    <string name="success">Success</string>
+    <string name="restore">Restore</string>
+</resources>
